@@ -1,0 +1,45 @@
+.outer{
+    display: flex;
+    flex-direction: column;
+}
+
+.box{
+    margin-top:5%;
+    margin-bottom:5%;
+    display: flex;
+}
+
+#one{
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#two{
+
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.text{
+    align-items: center;
+    justify-content: center;
+    font-size: 3em;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.text h2{
+    font-size: 1.5em;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.text p{
+    font-size: 0.5em;
+    margin-top:6%;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#i{
+    height: 20em;
+}
