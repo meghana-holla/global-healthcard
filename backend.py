@@ -125,28 +125,39 @@ class register_pat(Resource):
 api.add_resource(register_pat, '/register_pat')
 
 
-class add_prescription(Resource):
+class add_pres(Resource):
     def post(self):
-        req = eval(request.data.decode())
-
-        public_key = req["public"]
-        private_key = req["private"]
-
-        transaction  = contract.functions.addPrescriptions(
-            req["pat_id"],
-            req["name"], 
-            req['company'], 
-            req["dose"], 
-            req["unit"], 
-            req["period"], 
-            req["duration"]).buildTransaction()
-        transaction['nonce'] = web3.eth.getTransactionCount(public_key)
-        transaction['gas'] = 3000000
-        signed_tx = web3.eth.account.signTransaction(transaction, private_key)
-        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-        return str(tx_hash),200
-
-api.add_resource(add_prescription, '/add_prescription')
+        #req = eval(request.data.decode())
+            req = request.form
+        #try:
+            public_key = session["public"]
+            private_key = session["private"]
+            if("signedin" not in session or not session["signedin"]):
+                return "Not signed in."
+            if(session["type"]!="doc"):
+                return "Not signed in as a doctor."   
+            transaction  = contract.functions.addPrescriptions(
+                eval(req["pat_id"]),
+                req["name"], 
+                req['company'], 
+                int(req["dose"]), 
+                req["unit"], 
+                req["period"], 
+                int(req["duration"])).buildTransaction()
+            transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+            transaction['gas'] = 3000000
+            signed_tx = web3.eth.account.signTransaction(transaction, private_key)
+            tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+            return "Prescription sent to patient.",200
+        #except:
+        #    return "Invalid data recieved.",400
+    def get(self):
+        if("signedin" not in session or not session["signedin"]):
+            return "Not signed in."
+        if(session["type"]!="doc"):
+            return "Not signed in as a doctor."
+        return  make_response(render_template('add_prec_form.html'),200,{'Content-Type': 'text/html'})
+api.add_resource(add_pres, '/add_pres')
 
 class register_patient(Resource):
     def post(self):
