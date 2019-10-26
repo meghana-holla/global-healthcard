@@ -1,0 +1,116 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Ararat</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <link rel="manifest" href="site.webmanifest"> -->
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- CSS here -->
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style1.css">
+    <link href="https://fonts.googleapis.com/css?family=Cinzel+Decorative|Open+Sans:300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+
+
+    
+</head>
+
+<body>
+    <header>
+        <div class="header-area ">
+            <div id="sticky-header" class="main-header-area white-bg">
+                <div class="container-fluid p-0">
+                    <div class="row align-items-center justify-content-between no-gutters">
+                        <div class="col-xl-2 col-lg-2">
+                            <div class="logo-img">
+                                <a style="font-family: 'Cinzel Decorative', cursive;" href="index.html">
+                                    <span style="font-size: 2em;">GHC</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-7 col-lg-7">
+                            <div class="main-menu  d-none d-lg-block">
+                                <nav>
+                                    <ul id="navigation">
+                                        <li><a class="active" href="index.html">Home</a></li>
+
+                                        <li><a href="#">Doctor <i class="ti-angle-down"></i></a>
+                                            <ul class="submenu">
+                                                <li><a href="{{ url_for('register_doctor')}}">Signup</a></li>
+                                                <li><a href="{{ url_for('login_doc')}}">Login</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#">Patient<i class="ti-angle-down"></i></a>
+                                            <ul class="submenu">
+                                                <li><a href="{{ url_for('register_pat')}}">Signup</a></li>
+                                                <li><a href="{{ url_for('login_pat')}}">Login</a></li>
+                                            </ul>
+                                        </li>
+                                        {% if session.signedin %}
+                                        <li><a href="{{ url_for('logout')}}">Logout</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block">
+                            <div class="get_in_tauch">
+                                    {% if session.signedin && session.type == "doc" %}
+                                    <a href="{{ url_for('add_pres')}}" class="boxed-btn"><i class="material-icons">add</i></a>
+                                    {% endif %}
+                                    {% if session.signedin && session.type == "pat" %}
+                                    <a href="{{ url_for('get_pres')}}" class="boxed-btn">View</a>
+                                    {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="breadcam_area bradcam_bg overlay2">
+        <div style="font-family: 'Open Sans', sans-serif;font-weight: 100;" class="bradcam_text">
+            <h3>Global Health Card</h3>
+        </div>
+    </div>
+    <div id="outer">
+            <div class="box" id="one">
+                <div class="image">
+                    <img src = "../../verifiable.PNG">
+                </div>
+                <div class="text">
+                    <h2>Verifiable Prescription</h2>
+                    <p>Say goodbye to Written Prescription</p>
+                </div>
+            </div>
+    
+            <div class="box" id="two">
+                <div class="image">
+                        <img id="i" src = "../../doctor.png">
+                </div>
+                <div class="text">
+                    <h2>Secure and Globally Available</h2>
+                    <p>Decentralized and Secure Storage of Prescription</p>
+                </div>
+            </div>
+        </div>
+    
+
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/vendor/modernizr-3.5.0.min.js"></script>
+    
+</body>
