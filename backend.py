@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session 
+from flask import Flask, jsonify, request, session, render_template, make_response
 from flask_restful import Resource, Api
 from pymongo import MongoClient
 import requests
@@ -15,27 +15,115 @@ contract_addr = "0x8fDd21C593c5693788E0248b4C86bB66375f8dA7"
 contract = web3.eth.contract(address=contract_addr, abi=abi)
 
 PATH = "http://127.0.0.1:5000/"
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path='', 
+            static_folder='static',
+            template_folder='templates')
 app.secret_key = 'i love white chocolate'
 api = Api(app)
 
+class login_doc(Resource):
+    def post(self):
+        #req = eval(request.data.decode())
+        req = request.form
+        try:
+            public_key = req["public"]
+            private_key = req["private"]
+            if(not contract.caller().cd(public_key)): return "Account does not exist"
+            transaction  = contract.functions.getpat(0).buildTransaction()
+            transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+            transaction['gas'] = 3000000
+            signed_tx = web3.eth.account.signTransaction(transaction, private_key)
+            tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+            session["signedin"] = True
+            session["public"] = public_key
+            session["private"] = private_key
+            session["type"] = "doc"
+            return "Logged In",200
+        except:
+            return "Wrong Private Key",400
+    def get(self):
+        return  make_response(render_template('login.html'),200,{'Content-Type': 'text/html'})
+api.add_resource(login_doc, '/login_doc')
+
 class register_doctor(Resource):
     def post(self):
-        req = eval(request.data.decode())
-
-        public_key = req["public"]
-        private_key = req["private"]
-        transaction  = contract.functions.initdoc(
-            req["name"],
-            req["hospital"],
-            req['specialization']).buildTransaction()
-        transaction['nonce'] = web3.eth.getTransactionCount(public_key)
-
-        signed_tx = web3.eth.account.signTransaction(transaction, private_key)
-        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-        return str(tx_hash),200
-        
+        #req = eval(request.data.decode())
+        req = request.form
+        try:
+            public_key = req["public"]
+            private_key = req["private"]
+            if(contract.caller().cd(public_key)): return "Account already exists"
+            transaction  = contract.functions.initdoc(
+                req["name"],
+                req["hospital"],
+                req['specialization']).buildTransaction()
+            transaction['gas'] = 3000000
+            transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+            signed_tx = web3.eth.account.signTransaction(transaction, private_key)
+            tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+            session["signedin"] = True
+            session["public"] = public_key
+            session["private"] = private_key
+            session["type"] = "doc"
+            return "Created Account",200
+        except:
+            return "Wrong credentials",400
+    def get(self):
+        return  make_response(render_template('signup_doc.html'),200,{'Content-Type': 'text/html'})
 api.add_resource(register_doctor, '/register_doctor')
+
+class login_pat(Resource):
+    def post(self):
+        #req = eval(request.data.decode())
+        req = request.form
+        try:
+            public_key = req["public"]
+            private_key = req["private"]
+            if(not contract.caller().cp(public_key)): return "Account does not exist"
+            transaction  = contract.functions.getdoc(0).buildTransaction()
+            transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+            transaction['gas'] = 3000000
+            signed_tx = web3.eth.account.signTransaction(transaction, private_key)
+            tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+            session["signedin"] = True
+            session["public"] = public_key
+            session["private"] = private_key
+            session["type"] = "pat"
+            return "Logged In",200
+        except:
+            return "Wrong Private Key",400
+    def get(self):
+        return  make_response(render_template('login.html'),200,{'Content-Type': 'text/html'})
+api.add_resource(login_pat, '/login_pat')
+
+class register_pat(Resource):
+    def post(self):
+        #req = eval(request.data.decode())
+        req = request.form
+        try:
+            public_key = req["public"]
+            private_key = req["private"]
+            if(contract.caller().cp(public_key)): return "Account already exists"
+            transaction  = contract.functions.initpat(
+                req["name"],
+                int(req["age"]),
+                req['bloodgroup']).buildTransaction()
+            transaction['gas'] = 3000000
+            transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+            signed_tx = web3.eth.account.signTransaction(transaction, private_key)
+            tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+            session["signedin"] = True
+            session["public"] = public_key
+            session["private"] = private_key
+            session["type"] = "pat"
+            return "Created Account",200
+        except:
+            return "Wrong credentials",400
+    def get(self):
+        return  make_response(render_template('signup_pat.html'),200,{'Content-Type': 'text/html'})
+api.add_resource(register_pat, '/register_pat')
+
 
 class add_prescription(Resource):
     def post(self):
@@ -53,7 +141,7 @@ class add_prescription(Resource):
             req["period"], 
             req["duration"]).buildTransaction()
         transaction['nonce'] = web3.eth.getTransactionCount(public_key)
-
+        transaction['gas'] = 3000000
         signed_tx = web3.eth.account.signTransaction(transaction, private_key)
         tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
         return str(tx_hash),200
@@ -67,6 +155,7 @@ class register_patient(Resource):
         private_key = req["private"]
         transaction  = contract.functions.initpat(req["name"],req["age"],req["blood_group"]).buildTransaction()
         transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+        transaction['gas'] = 3000000
         signed_tx = web3.eth.account.signTransaction(transaction, private_key)
         tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
         return str(tx_hash),200
@@ -87,7 +176,7 @@ class get_patients(Resource):
             transaction['gas'] = 3000000
             signed_tx = web3.eth.account.signTransaction(transaction, private_key)
             tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-            retVal = contract.caller().get_pat_return_value();
+            retVal = contract.caller().get_pat_return_value()
             ret.append(contract.caller().allpatients(str(retVal)))
         return ret
 api.add_resource(get_patients, '/get_patients')
