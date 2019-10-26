@@ -8,25 +8,27 @@ contract GHC {
         string unit;
         string period;
         uint duration;
+        string docname;
+        string hospital;
     }
 
     struct Doctor{
-        address id;
         string name;
         string hospital;
         uint npat;
         string specialization;
+        address id;
         mapping(uint => address) patients;
         mapping(address => bool) checkpatients;
     }
 
     struct Patient{
-        address id;
         string name;
         uint age;
         string bloodgroup;
         uint ndoc;
         uint npres;
+        address id;
         mapping(uint => Prescription) prescriptions;
         mapping(uint => address) doctors;
         mapping(address => bool) checkdoctors;
@@ -44,7 +46,7 @@ contract GHC {
         string memory hospital,
         string memory specialization
         ) public {
-        alldoctors[msg.sender] = Doctor(msg.sender, name, hospital, 0, specialization);
+        alldoctors[msg.sender] = Doctor(name, hospital, 0, specialization,msg.sender);
         cd[msg.sender] = true;
     }
 
@@ -53,7 +55,7 @@ contract GHC {
         uint age,
         string memory bloodgroup
         ) public {
-        allpatients[msg.sender] = Patient(msg.sender, name, age, bloodgroup, 0, 0);
+        allpatients[msg.sender] = Patient(name, age, bloodgroup, 0, 0,msg.sender);
         cp[msg.sender] = true;
     }
 
@@ -97,6 +99,8 @@ contract GHC {
         allpatients[patientaddr].prescriptions[p].unit = unit;
         allpatients[patientaddr].prescriptions[p].period = period;
         allpatients[patientaddr].prescriptions[p].duration = duration;
+        allpatients[patientaddr].prescriptions[p].docname = alldoctors[msg.sender].name;
+        allpatients[patientaddr].prescriptions[p].hospital = alldoctors[msg.sender].hospital;
         allpatients[patientaddr].npres++;
         if(!allpatients[patientaddr].checkdoctors[msg.sender])
         {
