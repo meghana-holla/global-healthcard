@@ -1,0 +1,51 @@
+.user-card{
+    background: rgb(47,207,139);
+    background: linear-gradient(90deg, rgba(47,207,139,1) 0%, rgba(29,130,114,1) 35%, rgba(0,212,255,1) 100%);
+    padding: 5%;
+    box-shadow: 1px 1px 20px grey;
+}
+
+.text{
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+.cards-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding:3%;
+    font-family: 'Montserrat', sans-serif !important;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    padding-left:6.5%;
+}
+
+.presCard{
+    box-shadow: 2px 2px 20px grey;
+    border: none !important;
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    padding:3%;
+    margin:1%;
+}
+
+.card-header{
+    border: none;
+}
+
+.card-value{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.header{
+    font-size: 1.5em;
+}
+
+.containerr{
+    display: flex;
+    justify-content: center;
+}
