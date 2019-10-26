@@ -56,24 +56,24 @@ contract GHC {
     }
 
     function addPrescriptions(
-        uint pattt,
-        string memory n,
-        string memory c,
-        uint dos,
-        string memory u,
-        string memory pe,
-        uint dur
+        uint pat_id,
+        string memory name,
+        string memory company,
+        uint dose,
+        string memory unit,
+        string memory period,
+        uint duration
         ) public {
-        address patientaddr = address(uint(pattt));
+        address patientaddr = address(uint(pat_id));
         require(cd[msg.sender], "Register as doctor");
         require(cp[patientaddr], "Not a registered patient");
         uint p = allpatients[patientaddr].npres;
-        allpatients[patientaddr].prescriptions[p].name = n;
-        allpatients[patientaddr].prescriptions[p].company = c;
-        allpatients[patientaddr].prescriptions[p].dose = dos;
-        allpatients[patientaddr].prescriptions[p].unit = u;
-        allpatients[patientaddr].prescriptions[p].period = pe;
-        allpatients[patientaddr].prescriptions[p].duration = dur;
+        allpatients[patientaddr].prescriptions[p].name = name;
+        allpatients[patientaddr].prescriptions[p].company = company;
+        allpatients[patientaddr].prescriptions[p].dose = dose;
+        allpatients[patientaddr].prescriptions[p].unit = unit;
+        allpatients[patientaddr].prescriptions[p].period = period;
+        allpatients[patientaddr].prescriptions[p].duration = duration;
         allpatients[patientaddr].npres++;
         if(!allpatients[patientaddr].checkdoctors[msg.sender])
         {
