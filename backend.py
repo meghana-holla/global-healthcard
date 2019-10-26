@@ -22,6 +22,11 @@ app = Flask(__name__,
 app.secret_key = 'i love white chocolate'
 api = Api(app)
 
+class home(Resource):
+    def get(self):
+        return make_response(render_template('homepage.html'),200,{'Content-Type': 'text/html'})
+api.add_resource(home, '/')
+
 class login_doc(Resource):
     def post(self):
         #req = eval(request.data.decode())
@@ -29,7 +34,7 @@ class login_doc(Resource):
         try:
             public_key = req["public"]
             private_key = req["private"]
-            if(not contract.caller().cd(public_key)): return "Account does not exist"
+            if(not contract.caller().cd(public_key)): return make_response(render_template('message.html',message="Account does not exist"),400,{'Content-Type': 'text/html'})
             transaction  = contract.functions.getpat(0).buildTransaction()
             transaction['nonce'] = web3.eth.getTransactionCount(public_key)
             transaction['gas'] = 3000000

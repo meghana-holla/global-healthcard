@@ -4,16 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Ararat</title>
+    <title>GHC</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- <link rel="manifest" href="site.webmanifest"> -->
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
-    <!-- Place favicon.ico in the root directory -->
-
-    <!-- CSS here -->
-
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="style1.css">
@@ -33,7 +28,7 @@
                     <div class="row align-items-center justify-content-between no-gutters">
                         <div class="col-xl-2 col-lg-2">
                             <div class="logo-img">
-                                <a style="font-family: 'Cinzel Decorative', cursive;" href="index.html">
+                                <a style="font-family: 'Cinzel Decorative', cursive;" href="{{ url_for('home')}}>
                                     <span style="font-size: 2em;">GHC</span>
                                 </a>
                             </div>
@@ -42,7 +37,7 @@
                             <div class="main-menu  d-none d-lg-block">
                                 <nav>
                                     <ul id="navigation">
-                                        <li><a class="active" href="index.html">Home</a></li>
+                                        <li><a class="active" href="{{ url_for('home')}}">Home</a></li>
 
                                         <li><a href="#">Doctor <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
@@ -65,10 +60,10 @@
                         </div>
                         <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                             <div class="get_in_tauch">
-                                    {% if session.signedin && session.type == "doc" %}
+                                    {% if session.signedin and session.type == "doc" %}
                                     <a href="{{ url_for('add_pres')}}" class="boxed-btn"><i class="material-icons">add</i></a>
                                     {% endif %}
-                                    {% if session.signedin && session.type == "pat" %}
+                                    {% if session.signedin and session.type == "pat" %}
                                     <a href="{{ url_for('get_pres')}}" class="boxed-btn">View</a>
                                     {% endif %}
                             </div>
