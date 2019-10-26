@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session, render_template, make_response
+from flask import Flask, jsonify, request, session, render_template, make_response, redirect
 from flask_restful import Resource, Api
 from pymongo import MongoClient
 import requests
@@ -39,11 +39,11 @@ class login_doc(Resource):
             session["public"] = public_key
             session["private"] = private_key
             session["type"] = "doc"
-            return "Logged In",200
+            return redirect("/", code=303)
         except:
-            return "Wrong Private Key",400
+            return make_response(render_template('message.html',message="Wrong private key"),400,{'Content-Type': 'text/html'})
     def get(self):
-        return  make_response(render_template('login.html'),200,{'Content-Type': 'text/html'})
+        return make_response(render_template('login.html'),200,{'Content-Type': 'text/html'})
 api.add_resource(login_doc, '/login_doc')
 
 class register_doctor(Resource):
@@ -53,7 +53,7 @@ class register_doctor(Resource):
         try:
             public_key = req["public"]
             private_key = req["private"]
-            if(contract.caller().cd(public_key)): return "Account already exists"
+            if(contract.caller().cd(public_key)): return make_response(render_template('message.html',message="Account already exists"),400,{'Content-Type': 'text/html'})
             transaction  = contract.functions.initdoc(
                 req["name"],
                 req["hospital"],
@@ -66,9 +66,9 @@ class register_doctor(Resource):
             session["public"] = public_key
             session["private"] = private_key
             session["type"] = "doc"
-            return "Created Account",200
+            return redirect("/", code=303)
         except:
-            return "Wrong credentials",400
+            return make_response(render_template('message.html',message="Wrong credentials"),400,{'Content-Type': 'text/html'})
     def get(self):
         return  make_response(render_template('signup_doc.html'),200,{'Content-Type': 'text/html'})
 api.add_resource(register_doctor, '/register_doctor')
@@ -90,9 +90,9 @@ class login_pat(Resource):
             session["public"] = public_key
             session["private"] = private_key
             session["type"] = "pat"
-            return "Logged In",200
+            return redirect("/", code=303)
         except:
-            return "Wrong Private Key",400
+            return make_response(render_template('message.html',message="Wrong private key"),400,{'Content-Type': 'text/html'})
     def get(self):
         return  make_response(render_template('login.html'),200,{'Content-Type': 'text/html'})
 api.add_resource(login_pat, '/login_pat')
@@ -104,7 +104,7 @@ class register_pat(Resource):
         try:
             public_key = req["public"]
             private_key = req["private"]
-            if(contract.caller().cp(public_key)): return "Account already exists"
+            if(contract.caller().cp(public_key)): return make_response(render_template('message.html',message="Account already exists"),400,{'Content-Type': 'text/html'})
             transaction  = contract.functions.initpat(
                 req["name"],
                 int(req["age"]),
@@ -117,9 +117,9 @@ class register_pat(Resource):
             session["public"] = public_key
             session["private"] = private_key
             session["type"] = "pat"
-            return "Created Account",200
+            return redirect("/", code=303)
         except:
-            return "Wrong credentials",400
+            return make_response(render_template('message.html',message="Wrong credentials"),400,{'Content-Type': 'text/html'})
     def get(self):
         return  make_response(render_template('signup_pat.html'),200,{'Content-Type': 'text/html'})
 api.add_resource(register_pat, '/register_pat')
@@ -128,14 +128,15 @@ api.add_resource(register_pat, '/register_pat')
 class add_pres(Resource):
     def post(self):
         #req = eval(request.data.decode())
-            req = request.form
-        #try:
+        req = request.form
+        try:
             public_key = session["public"]
             private_key = session["private"]
             if("signedin" not in session or not session["signedin"]):
-                return "Not signed in."
+                return make_response(render_template('message.html',message="Not signed in"),400,{'Content-Type': 'text/html'})
             if(session["type"]!="doc"):
-                return "Not signed in as a doctor."   
+                return make_response(render_template('message.html',message="Not signed in as doctor."),400,{'Content-Type': 'text/html'})
+            if(not contract.caller().cp(req["pat_id"])): return make_response(render_template('message.html',message="Patient account not registered."),400,{'Content-Type': 'text/html'})
             transaction  = contract.functions.addPrescriptions(
                 eval(req["pat_id"]),
                 req["name"], 
@@ -148,30 +149,16 @@ class add_pres(Resource):
             transaction['gas'] = 3000000
             signed_tx = web3.eth.account.signTransaction(transaction, private_key)
             tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-            return "Prescription sent to patient.",200
-        #except:
-        #    return "Invalid data recieved.",400
+            return make_response(render_template('message.html',message="Prescription sent"),400,{'Content-Type': 'text/html'})
+        except:
+            return make_response(render_template('message.html',message="Invalid data recieved."),400,{'Content-Type': 'text/html'})
     def get(self):
         if("signedin" not in session or not session["signedin"]):
-            return "Not signed in."
+            return make_response(render_template('message.html',message="Not signed in"),400,{'Content-Type': 'text/html'})
         if(session["type"]!="doc"):
-            return "Not signed in as a doctor."
+            return make_response(render_template('message.html',message="Not signed in as doctor."),400,{'Content-Type': 'text/html'})
         return  make_response(render_template('add_prec_form.html'),200,{'Content-Type': 'text/html'})
 api.add_resource(add_pres, '/add_pres')
-
-class register_patient(Resource):
-    def post(self):
-        req = eval(request.data.decode())
-        public_key = req["public"]
-        private_key = req["private"]
-        transaction  = contract.functions.initpat(req["name"],req["age"],req["blood_group"]).buildTransaction()
-        transaction['nonce'] = web3.eth.getTransactionCount(public_key)
-        transaction['gas'] = 3000000
-        signed_tx = web3.eth.account.signTransaction(transaction, private_key)
-        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-        return str(tx_hash),200
-
-api.add_resource(register_patient, '/register_patient')
 
 class get_patients(Resource):
     def get(self):
@@ -232,6 +219,12 @@ class get_pres(Resource):
         name = contract.caller().allpatients(public_key)[0];
         return  make_response(render_template('listPatientPrescription.html', ret=ret, user=[name, public_key]),200,{'Content-Type': 'text/html'})
 api.add_resource(get_pres, '/get_pres')
+
+class logout(Resource):
+    def get(self):
+        session["signedin"] = False;
+        return redirect("/", code=303)
+api.add_resource(logout, '/logout')
 
 if __name__ == '__main__':
     app.run(debug=True)
