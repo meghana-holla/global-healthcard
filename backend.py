@@ -19,18 +19,45 @@ app = Flask(__name__)
 app.secret_key = 'i love white chocolate'
 api = Api(app)
 
-class register_patient(Resource):
+class register_doctor(Resource):
     def post(self):
-        req = eval(request.data)
-        if(req):
-            public_key = req["public"]
-            private_key = req["private"]
-            transaction  = contract.functions.initpat(req["name"],req["age"],req["blood_group"]).buildTransaction()
-            transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+        req = eval(request.data.decode())
 
-            signed_tx = web3.eth.account.signTransaction(transaction, private_key)
-            tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-            return tx_hash
+        public_key = req["public"]
+        private_key = req["private"]
+        transaction  = contract.functions.initpat(
+            req["name"],
+            req["hospital"],
+            req['specialization']).buildTransaction()
+        transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+
+        signed_tx = web3.eth.account.signTransaction(transaction, private_key)
+        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        return tx_hash
         
-api.add_resource(register_patient, '/register_patient')
+api.add_resource(register_doctor, '/register_doctor')
+
+class add_prescription(Resource):
+    def post(self):
+        req = eval(request.data.decode())
+
+        public_key = req["public"]
+        private_key = req["private"]
+
+        transaction  = contract.functions.addPrescriptions(
+            req["pat_id"],
+            req["name"], 
+            req['company'], 
+            req["dose"], 
+            req["unit"], 
+            req["period"], 
+            req["duration"]).buildTransaction()
+        transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+
+        signed_tx = web3.eth.account.signTransaction(transaction, private_key)
+        tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+        return tx_hash
+
+api.add_resource(add_prescription, '/add_prescription')
+
 
