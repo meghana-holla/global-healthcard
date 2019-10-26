@@ -22,7 +22,7 @@ print(contract.caller().allpatients(pat_acc))
 
 
 '''
-transaction  = contract.functions.initdoc("xyz",1,"sa").buildTransaction()
+transaction  = contract.functions.initdoc("xyz","dajdan","sa").buildTransaction()
 transaction['nonce'] = web3.eth.getTransactionCount(pat_acc)
 
 signed_tx = web3.eth.account.signTransaction(transaction, pat_key)
