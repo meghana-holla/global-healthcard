@@ -21,17 +21,16 @@ api = Api(app)
 
 class register_patient(Resource):
     def post(self):
-        req = eval(request.data)
+        req = eval(request.data.decode())
         if(req):
             public_key = req["public"]
             private_key = req["private"]
             transaction  = contract.functions.initpat(req["name"],req["age"],req["blood_group"]).buildTransaction()
             transaction['nonce'] = web3.eth.getTransactionCount(public_key)
-
             signed_tx = web3.eth.account.signTransaction(transaction, private_key)
             tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-            return tx_hash
-        
+            return str(tx_hash),200
+
 api.add_resource(register_patient, '/register_patient')
 
 if __name__ == '__main__':
