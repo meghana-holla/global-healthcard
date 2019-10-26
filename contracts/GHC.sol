@@ -11,6 +11,7 @@ contract GHC {
     }
 
     struct Doctor{
+        address id;
         string name;
         string hospital;
         uint npat;
@@ -20,6 +21,7 @@ contract GHC {
     }
 
     struct Patient{
+        address id;
         string name;
         uint age;
         string bloodgroup;
@@ -42,7 +44,7 @@ contract GHC {
         string memory hospital,
         string memory specialization
         ) public {
-        alldoctors[msg.sender] = Doctor(name, hospital, 0, specialization);
+        alldoctors[msg.sender] = Doctor(msg.sender, name, hospital, 0, specialization);
         cd[msg.sender] = true;
     }
 
@@ -51,7 +53,7 @@ contract GHC {
         uint age,
         string memory bloodgroup
         ) public {
-        allpatients[msg.sender] = Patient(name, age, bloodgroup, 0, 0);
+        allpatients[msg.sender] = Patient(msg.sender, name, age, bloodgroup, 0, 0);
         cp[msg.sender] = true;
     }
 
