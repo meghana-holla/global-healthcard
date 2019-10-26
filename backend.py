@@ -61,3 +61,6 @@ class add_prescription(Resource):
 api.add_resource(add_prescription, '/add_prescription')
 
 
+if __name__ == '__main__':
+    app.run(debug=True)
+
