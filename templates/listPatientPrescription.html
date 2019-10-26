@@ -17,6 +17,9 @@
     </div>
     <div class = "containerr">
     <div class="cards-container">
+        {% if len(ret)==0: %}
+            <h1>No Current Prescriptions!</h1>
+        {% endif %}
         {% for prescriptions in ret %}
             <div class="presCard card">
                 <div class="card-header">
