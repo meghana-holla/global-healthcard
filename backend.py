@@ -141,7 +141,7 @@ class add_prescription(Resource):
             req["period"], 
             req["duration"]).buildTransaction()
         transaction['nonce'] = web3.eth.getTransactionCount(public_key)
-
+        transaction['gas'] = 3000000
         signed_tx = web3.eth.account.signTransaction(transaction, private_key)
         tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
         return str(tx_hash),200
@@ -155,6 +155,7 @@ class register_patient(Resource):
         private_key = req["private"]
         transaction  = contract.functions.initpat(req["name"],req["age"],req["blood_group"]).buildTransaction()
         transaction['nonce'] = web3.eth.getTransactionCount(public_key)
+        transaction['gas'] = 3000000
         signed_tx = web3.eth.account.signTransaction(transaction, private_key)
         tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
         return str(tx_hash),200
@@ -175,7 +176,7 @@ class get_patients(Resource):
             transaction['gas'] = 3000000
             signed_tx = web3.eth.account.signTransaction(transaction, private_key)
             tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-            retVal = contract.caller().get_pat_return_value();
+            retVal = contract.caller().get_pat_return_value()
             ret.append(contract.caller().allpatients(str(retVal)))
         return ret
 api.add_resource(get_patients, '/get_patients')
