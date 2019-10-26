@@ -204,7 +204,7 @@ class get_pres(Resource):
     def get(self):
         #req = eval(request.data.decode())
         if("signedin" not in session or not session["signedin"]): return "Not signed in"
-        if(session["type"] != "pat") return "Not signed in as patient"
+        if(session["type"] != "pat"): return "Not signed in as patient"
         public_key = session["public"]
         private_key = session["private"]
         n = contract.caller().allpatients(public_key)[4];
