@@ -33,7 +33,7 @@ class register_doctor(Resource):
 
         signed_tx = web3.eth.account.signTransaction(transaction, private_key)
         tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-        return tx_hash
+        return str(tx_hash),200
         
 api.add_resource(register_doctor, '/register_doctor')
 
@@ -56,7 +56,7 @@ class add_prescription(Resource):
 
         signed_tx = web3.eth.account.signTransaction(transaction, private_key)
         tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-        return tx_hash
+        return str(tx_hash),200
 
 api.add_resource(add_prescription, '/add_prescription')
 
