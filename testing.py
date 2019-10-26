@@ -19,13 +19,11 @@ contract = web3.eth.contract(address=contract_addr, abi=abi)
 
 print(contract.caller().allpatients(pat_acc))
 
-
-
 '''
 transaction  = contract.functions.initdoc("xyz","dajdan","sa").buildTransaction()
-transaction['nonce'] = web3.eth.getTransactionCount(pat_acc)
+transaction['nonce'] = web3.eth.getTransactionCount(admin_acc)
 
-signed_tx = web3.eth.account.signTransaction(transaction, pat_key)
+signed_tx = web3.eth.account.signTransaction(transaction, admin_pvtkey)
 tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
 
 print(tx_hash)

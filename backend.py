@@ -34,3 +34,6 @@ class register_patient(Resource):
         
 api.add_resource(register_patient, '/register_patient')
 
+if __name__ == '__main__':
+    app.run(debug=True)
+
