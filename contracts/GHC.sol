@@ -55,6 +55,27 @@ contract GHC {
         cp[msg.sender] = true;
     }
 
+    address public get_pat_return_value;
+    function getpat(uint i) public
+    {
+        address p = alldoctors[msg.sender].patients[i];
+        get_pat_return_value = p;
+    }
+
+    address public get_doc_return_value;
+    function getdoc(uint i) public
+    {
+        address p = allpatients[msg.sender].doctors[i];
+        get_doc_return_value = p;
+    }
+
+    Prescription public get_pres_return_value;
+    function getpres(uint i) public
+    {
+        Prescription memory p = allpatients[msg.sender].prescriptions[i];
+        get_pres_return_value = p;
+    }
+
     function addPrescriptions(
         uint pat_id,
         string memory name,

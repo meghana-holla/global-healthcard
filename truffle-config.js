@@ -10,7 +10,7 @@ module.exports = {
       port: 8545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
       gasPrice: 0,
-      gas:0,
+      gasLimit: 2000000000,
     }
   },
   // Set default mocha options here, use special reporters etc.
