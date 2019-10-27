@@ -85,7 +85,7 @@ class login_pat(Resource):
         try:
             public_key = req["public"]
             private_key = req["private"]
-            if(not contract.caller().cp(public_key)): return "Account does not exist"
+            if(not contract.caller().cp(public_key)): return make_response(render_template('message.html',message="Patient not registered"),400,{'Content-Type': 'text/html'})
             transaction  = contract.functions.getdoc(0).buildTransaction()
             transaction['nonce'] = web3.eth.getTransactionCount(public_key)
             transaction['gas'] = 3000000
